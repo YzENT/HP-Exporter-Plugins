@@ -10,6 +10,7 @@ bl_info = {
 }
 
 import bpy
+import math
 import os
 from bpy.types import Operator
 from bpy.props import BoolProperty, StringProperty
@@ -95,7 +96,79 @@ def setup_vehicle_id(car_id, self):
     else:
         self.report({'ERROR'}, "Collection already exists")
         
-
+        
+def get_meshes_based_on_state(include_hidden):
+    if include_hidden:
+        return [obj for obj in bpy.data.objects if obj.type == "MESH"]
+    else:
+        return [obj for obj in bpy.data.objects if obj.type == "MESH" and obj.visible_get()]
+        
+        
+def apply_mesh_rotation(include_hidden, delete_empty_parent, self):
+    meshes = get_meshes_based_on_state(include_hidden)
+    
+    #Unlink parent while retaining transformation
+    for mesh in meshes:
+        if mesh.parent:
+            parent_temp = mesh.parent
+            
+            #If mesh is not hidden then directly unlink
+            if not mesh.hide_get():
+                mesh.select_set(True)
+                bpy.ops.object.parent_clear(type = "CLEAR_KEEP_TRANSFORM")
+                bpy.ops.object.transform_apply(location = True, rotation = True, scale = True)
+                mesh.select_set(False)
+            else: #If it's hidden, show -> unlink -> hide
+                mesh.hide_set(False)
+                mesh.select_set(True)
+                bpy.ops.object.parent_clear(type = "CLEAR_KEEP_TRANSFORM")
+                bpy.ops.object.transform_apply(location = True, rotation = True, scale = True)
+                mesh.select_set(False)
+                mesh.hide_set(True)
+                
+            #If parent empty, delete parent
+            if parent_temp.type == 'EMPTY' and len(parent_temp.children) == 0 and delete_empty_parent:
+                bpy.data.objects.remove(parent_temp)
+                
+        #If mesh not in a parent then directly apply transformation        
+        else:
+            mesh.select_set(True)
+            bpy.ops.object.transform_apply(location = True, rotation = True, scale = True)
+            mesh.select_set(False)
+            
+    #Create parent
+    for mesh in meshes:
+        empty_name = "Empty_" + mesh.name
+        bpy.ops.object.empty_add(type = "PLAIN_AXES")
+        empty = bpy.context.active_object
+        empty.name = empty_name
+        
+        #If mesh is not hidden do
+        if not mesh.hide_get():
+            mesh.rotation_euler = (math.radians(-90), 0.0, 0.0)
+            mesh.select_set(True)
+            bpy.ops.object.transform_apply(location = False, rotation = True, scale = False)
+            empty.select_set(True)
+            bpy.context.view_layer.objects.active = empty
+            bpy.ops.object.parent_set(type = 'OBJECT', keep_transform = True)
+            empty.rotation_euler = (math.radians(90), 0.0, 0.0)
+        else:
+            mesh.hide_set(False)
+            mesh.rotation_euler = (math.radians(-90), 0.0, 0.0)
+            mesh.select_set(True)
+            bpy.ops.object.transform_apply(location = False, rotation = True, scale = False)
+            empty.select_set(True)
+            bpy.context.view_layer.objects.active = empty
+            bpy.ops.object.parent_set(type = 'OBJECT', keep_transform = True)
+            empty.rotation_euler = (math.radians(90), 0.0, 0.0)
+            mesh.hide_set(True)
+        
+        mesh.select_set(False)
+        empty.select_set(False)
+        
+        self.report({'INFO'}, "Finished")
+        
+        
 #Main Menu
 class MAIN_MENU_HP_EXPORTER_PLUGINS(bpy.types.Menu):
     
@@ -104,7 +177,19 @@ class MAIN_MENU_HP_EXPORTER_PLUGINS(bpy.types.Menu):
     
     def draw(self, context):
         layout = self.layout
-        layout.operator("initialize.scene", icon="OUTLINER_COLLECTION")
+        layout.menu("SUB_MENU_CAR", icon = "AUTO")
+        
+        
+#Sub Menu
+class SUB_MENU_CAR(bpy.types.Menu):
+
+    bl_idname = "SUB_MENU_CAR"
+    bl_label = "Vehicle"
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("initialize.scene", icon = "OUTLINER_COLLECTION")
+        layout.operator("assign.empty", icon = "EMPTY_AXIS")
 
 
 #Operators
@@ -164,9 +249,53 @@ class Initialize_Scene(bpy.types.Operator):
         return {'FINISHED'}
         
         
+class Assign_Empty(bpy.types.Operator):
+    
+    bl_idname = "assign.empty"
+    bl_label = "Assign parent to all mesh"
+    bl_description = "Auto assign each mesh a parent with the correct rotation."
+    
+    include_hidden: BoolProperty(
+        name = "Include hidden meshes",
+        description = "Assigns a empty to each mesh while retaining their transformation",
+        default = True,
+    )
+    
+    delete_empty_parent: BoolProperty(
+        name = "Delete empty parent",
+        description = "Delete parent with 0 meshes",
+        default = True,
+    )
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = False
+        layout.use_property_decorate = False  # No animation.
+        
+        ##
+        box = layout.box()
+        split = box.split(factor=0.75)
+        col = split.column(align=True)
+        col.label(text="Preferences", icon="OPTIONS")
+        
+        box.prop(self, "include_hidden")
+        box.prop(self, "delete_empty_parent")
+        
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self, width = 250)   
+        
+    def execute(self, context):
+        apply_mesh_rotation(self.include_hidden, self.delete_empty_parent, self)
+            
+        return {'FINISHED'}
+        
+        
 register_classes = (
     MAIN_MENU_HP_EXPORTER_PLUGINS,
+    SUB_MENU_CAR,
     Initialize_Scene,
+    Assign_Empty,
 )
 
 def menu_func(self, context):
