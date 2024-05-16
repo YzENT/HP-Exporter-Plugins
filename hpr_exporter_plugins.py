@@ -17,46 +17,48 @@ from bpy.props import BoolProperty, StringProperty
 
 
 def clear_scene():
-	for block in bpy.data.objects:
-		#if block.users == 0:
-		bpy.data.objects.remove(block, do_unlink = True)
+    for block in bpy.data.objects:
+        #if block.users == 0:
+            bpy.data.objects.remove(block, do_unlink=True)
 
-	for block in bpy.data.meshes:
-		if block.users == 0:
-			bpy.data.meshes.remove(block)
+    for block in bpy.data.meshes:
+        if block.users == 0:
+            bpy.data.meshes.remove(block)
 
-	for block in bpy.data.materials:
-		if block.users == 0:
-			bpy.data.materials.remove(block)
+    for block in bpy.data.materials:
+        if block.users == 0:
+            bpy.data.materials.remove(block)
 
-	for block in bpy.data.textures:
-		if block.users == 0:
-			bpy.data.textures.remove(block)
+    for block in bpy.data.textures:
+        if block.users == 0:
+            bpy.data.textures.remove(block)
 
-	for block in bpy.data.images:
-		if block.users == 0:
-			bpy.data.images.remove(block)
-	
-	for block in bpy.data.cameras:
-		if block.users == 0:
-			bpy.data.cameras.remove(block)
-	
-	for block in bpy.data.lights:
-		if block.users == 0:
-			bpy.data.lights.remove(block)
-	
-	for block in bpy.data.armatures:
-		if block.users == 0:
-			bpy.data.armatures.remove(block)
-	
-	for block in bpy.data.collections:
-		if block.users == 0:
-			bpy.data.collections.remove(block)
-		else:
-			bpy.data.collections.remove(block, do_unlink=True)
+    for block in bpy.data.images:
+        if block.users == 0:
+            bpy.data.images.remove(block)
+
+    for block in bpy.data.cameras:
+        if block.users == 0:
+            bpy.data.cameras.remove(block)
+
+    for block in bpy.data.lights:
+        if block.users == 0:
+            bpy.data.lights.remove(block)
+
+    for block in bpy.data.armatures:
+        if block.users == 0:
+            bpy.data.armatures.remove(block)
+
+    for block in bpy.data.collections:
+        if block.users == 0:
+            bpy.data.collections.remove(block)
+        else:
+            bpy.data.collections.remove(block, do_unlink=True)
             
-            
-def import_default_hp_textures(self):
+    return 0
+
+    
+def import_default_hp_textures():
     script_directory = os.path.dirname(__file__)
     directory = os.path.join(script_directory, "HP_DefaultTextures")
 
@@ -70,10 +72,13 @@ def import_default_hp_textures(self):
             image = bpy.data.images.get(dds_file)
             image.is_shared_asset = True
     else:
-        self.report({'ERROR'}, "Could not find folder HP_DefaultTextures.")
+        print("Could not find folder HP_DefaultTextures.")
+        return -1
+        
+    return 0
         
         
-def setup_vehicle_id(car_id, self):
+def setup_vehicle_id(car_id):
     vehicle_collection_name = "VEH_" + car_id + "_MS"
     
     if vehicle_collection_name not in bpy.data.collections:
@@ -94,79 +99,62 @@ def setup_vehicle_id(car_id, self):
         
         bpy.context.scene.collection.children.link(vehicle_collection)
     else:
-        self.report({'ERROR'}, "Collection already exists")
+        print("Collection already exists.")
+        return -1
+        
+    return 0
         
         
-def get_meshes_based_on_state(include_hidden):
-    if include_hidden:
-        return [obj for obj in bpy.data.objects if obj.type == "MESH"]
-    else:
-        return [obj for obj in bpy.data.objects if obj.type == "MESH" and obj.visible_get()]
+def only_selected_mesh():
+    return [obj for obj in bpy.context.selected_objects if obj.type == 'MESH']
         
         
-def apply_mesh_rotation(include_hidden, delete_empty_parent, self):
-    meshes = get_meshes_based_on_state(include_hidden)
+def apply_mesh_rotation():
+    meshes = only_selected_mesh()
     
-    #Unlink parent while retaining transformation
+    #If no mesh selected
+    if not meshes:
+        print("No meshes are selected.")
+        return -1
+        
+    #Perform check if all meshes fit criteria
     for mesh in meshes:
         if mesh.parent:
-            parent_temp = mesh.parent
+            print("Please make sure selected meshes are not linked to any parent.")
+            return -1
             
-            #If mesh is not hidden then directly unlink
-            if not mesh.hide_get():
-                mesh.select_set(True)
-                bpy.ops.object.parent_clear(type = "CLEAR_KEEP_TRANSFORM")
-                bpy.ops.object.transform_apply(location = True, rotation = True, scale = True)
-                mesh.select_set(False)
-            else: #If it's hidden, show -> unlink -> hide
-                mesh.hide_set(False)
-                mesh.select_set(True)
-                bpy.ops.object.parent_clear(type = "CLEAR_KEEP_TRANSFORM")
-                bpy.ops.object.transform_apply(location = True, rotation = True, scale = True)
-                mesh.select_set(False)
-                mesh.hide_set(True)
-                
-            #If parent empty, delete parent
-            if parent_temp.type == 'EMPTY' and len(parent_temp.children) == 0 and delete_empty_parent:
-                bpy.data.objects.remove(parent_temp)
-                
-        #If mesh not in a parent then directly apply transformation        
-        else:
-            mesh.select_set(True)
-            bpy.ops.object.transform_apply(location = True, rotation = True, scale = True)
-            mesh.select_set(False)
-            
-    #Create parent
+        #Not sure why it doesn't really detect hidden meshes but whatever
+        if mesh.hide_get():
+            print("Please make sure selected meshes are not hidden.")
+            return -1
+        
     for mesh in meshes:
+        #Apply transformation to mesh first before proceeding
+        mesh.select_set(True)
+        bpy.ops.object.transform_apply(location = True, rotation = True, scale = True)
+        mesh.select_set(False)
+
+        #Create parent
         empty_name = "Empty_" + mesh.name
         bpy.ops.object.empty_add(type = "PLAIN_AXES")
         empty = bpy.context.active_object
         empty.name = empty_name
         
-        #If mesh is not hidden do
-        if not mesh.hide_get():
-            mesh.rotation_euler = (math.radians(-90), 0.0, 0.0)
-            mesh.select_set(True)
-            bpy.ops.object.transform_apply(location = False, rotation = True, scale = False)
-            empty.select_set(True)
-            bpy.context.view_layer.objects.active = empty
-            bpy.ops.object.parent_set(type = 'OBJECT', keep_transform = True)
-            empty.rotation_euler = (math.radians(90), 0.0, 0.0)
-        else:
-            mesh.hide_set(False)
-            mesh.rotation_euler = (math.radians(-90), 0.0, 0.0)
-            mesh.select_set(True)
-            bpy.ops.object.transform_apply(location = False, rotation = True, scale = False)
-            empty.select_set(True)
-            bpy.context.view_layer.objects.active = empty
-            bpy.ops.object.parent_set(type = 'OBJECT', keep_transform = True)
-            empty.rotation_euler = (math.radians(90), 0.0, 0.0)
-            mesh.hide_set(True)
+        #Rotate mesh -90 deg
+        mesh.rotation_euler = (math.radians(-90), 0.0, 0.0)
+        mesh.select_set(True)
+        bpy.ops.object.transform_apply(location = False, rotation = True, scale = False)
+        
+        #Assign parent, then rotate empty +90 deg
+        empty.select_set(True)
+        bpy.context.view_layer.objects.active = empty
+        bpy.ops.object.parent_set(type = 'OBJECT', keep_transform = True)
+        empty.rotation_euler = (math.radians(90), 0.0, 0.0)
         
         mesh.select_set(False)
         empty.select_set(False)
-        
-        self.report({'INFO'}, "Finished")
+            
+    return 0
         
         
 #Main Menu
@@ -239,12 +227,19 @@ class Initialize_Scene(bpy.types.Operator):
         return wm.invoke_props_dialog(self, width = 250)
     
     def execute(self, context):
+        status = 0
+    
         if self.clear_scene:
-            clear_scene()
-            setup_vehicle_id(self.car_id, self)
+            status += clear_scene()
+            status += setup_vehicle_id(self.car_id)
             
         if self.import_default_textures:
-            import_default_hp_textures(self)
+            status += import_default_hp_textures()
+            
+        if status == 0:
+            self.report({'INFO'}, "Scene prepared.")
+        else:
+            self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
             
         return {'FINISHED'}
         
@@ -252,18 +247,12 @@ class Initialize_Scene(bpy.types.Operator):
 class Assign_Empty(bpy.types.Operator):
     
     bl_idname = "assign.empty"
-    bl_label = "Assign parent to all mesh"
+    bl_label = "Assign parent to selected mesh"
     bl_description = "Auto assign each mesh a parent with the correct rotation."
     
-    include_hidden: BoolProperty(
-        name = "Include hidden meshes",
-        description = "Assigns a empty to each mesh while retaining their transformation",
-        default = True,
-    )
-    
-    delete_empty_parent: BoolProperty(
-        name = "Delete empty parent",
-        description = "Delete parent with 0 meshes",
+    only_selected: BoolProperty(
+        name = "Only selected mesh",
+        description = "Only assign parent to selected meshes",
         default = True,
     )
     
@@ -278,15 +267,23 @@ class Assign_Empty(bpy.types.Operator):
         col = split.column(align=True)
         col.label(text="Preferences", icon="OPTIONS")
         
-        box.prop(self, "include_hidden")
-        box.prop(self, "delete_empty_parent")
+        box.prop(self, "only_selected")
+        box.enabled = False
         
     def invoke(self, context, event):
         wm = context.window_manager
         return wm.invoke_props_dialog(self, width = 250)   
         
     def execute(self, context):
-        apply_mesh_rotation(self.include_hidden, self.delete_empty_parent, self)
+        status = 0
+    
+        if self.only_selected:
+            status += apply_mesh_rotation()
+            
+        if status == 0:
+            self.report({'INFO'}, "Parents applied to mesh.")
+        else:
+            self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
             
         return {'FINISHED'}
         
