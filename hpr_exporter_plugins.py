@@ -17,6 +17,7 @@ from bpy.props import BoolProperty, StringProperty
 
 
 def clear_scene():
+
     for block in bpy.data.objects:
         #if block.users == 0:
             bpy.data.objects.remove(block, do_unlink=True)
@@ -59,6 +60,7 @@ def clear_scene():
 
     
 def import_default_hp_textures():
+
     script_directory = os.path.dirname(__file__)
     directory = os.path.join(script_directory, "HP_DefaultTextures")
 
@@ -79,6 +81,7 @@ def import_default_hp_textures():
         
         
 def setup_vehicle_id(car_id):
+
     vehicle_collection_name = "VEH_" + car_id + "_MS"
     
     if vehicle_collection_name not in bpy.data.collections:
@@ -106,10 +109,12 @@ def setup_vehicle_id(car_id):
         
         
 def only_selected_mesh():
+
     return [obj for obj in bpy.context.selected_objects if obj.type == 'MESH']
         
         
 def apply_mesh_rotation():
+
     meshes = only_selected_mesh()
     
     #If no mesh selected
@@ -155,8 +160,15 @@ def apply_mesh_rotation():
         empty.select_set(False)
             
     return 0
-        
-        
+
+
+def getMaterial():
+    active = bpy.context.active_object
+
+    if active and active.type == 'MESH':
+        return active.active_material
+
+
 #Main Menu
 class MAIN_MENU_HP_EXPORTER_PLUGINS(bpy.types.Menu):
     
