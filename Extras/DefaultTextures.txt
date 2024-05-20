@@ -1,0 +1,53 @@
+This list is personalized. Do not follow by all means.
+
+1A_13_6D_23 - Police Lights Normal
+1A_25_C4_3C - Default Wheel SpecAO
+2B_FF_B9_05 - Police Elite Livery
+2F_10_0E_16 - Police Interceptor Livery
+3F_AA_EB_B3 - TIRESTYLE02 Normal
+4B_87_2E_E6 - Police Props all Body AO
+4C_9F_9C_E7 - TIRESTYLE02 Diffuse
+4F_AD_D9_D4 - Grey Diffuse
+6A_B1_28_39 - ROTOR01 Normal Blur
+6D_7E_D1_84 - TIRESTYLE02 DiffuseBlur
+7C_33_79_2A - ROTOR01 SpecAO
+7D_35_AD_2D - Caliper Normal
+7E_2B_B1_A9 - TIRESTYLE02 NormalBlur
+9A_AC_B3_7B - Caliper Diffuse
+10_C3_82_CD - RaceCar License Plate Diffuse
+11_BF_74_F7 - Crumple
+12_3A_1F_53 - Caliper SpecAO
+13_94_2A_CA - White Diffuse NOALPHA (Default AO)
+19_97_AA_7C - RaceCar License Plate Normal
+41_BF_91_1B - Door Shutline Diffuse
+52_5D_C3_15 - Cracked Glass Normal
+66_B5_56_5A - Grey Diffuse
+69_64_17_D4 - Grey45 Diffuse
+75_C5_BD_C5 - Cop License Plate Diffuse
+76_97_69_1B - Underside Diffuse 2
+78_0F_CB_5E - ROTOR01 SpecAOBlur
+81_2B_18_56 - CarbonFiber B Diffuse
+85_68_7E_F0 - Scratch
+86_EC_A9_E0 - Police Spotlight Diffuse
+88_08_F7_0D - Police Lights v3 Emissive
+89_20_8C_6D - Default Emissive
+90_73_F3_CE - CarbonFiber A Diffuse
+96_52_84_5A - ROTOR01 Normal
+A1_D7_D6_81 - Police Lights Diffuse
+A2_1B_B3_CA - Police HighwayPatrol Sheriff SheriffElite Livery
+A7_B6_FB_7C - White Diffuse
+AA_35_F8_D4 - Police Lights v3 Diffuse
+AB_10_77_F8 - Police Modern Rapid Livery
+BE_12_78_F1 - Cracked Glass
+DF_A6_EE_EB - ROTOR01 DiffuseBlur
+E4_8B_61_CB - Underside Diffuse
+E7_A5_A4_93 - Default Normal
+E9_39_A1_D5 - Police Lights Emissive
+EB_1B_16_5D - Black Diffuse
+EE_41_22_4F - Red Diffuse
+EF_71_06_24 - Police Lights v3 Normal
+F1_36_D3_A5 - Police Lights AO
+F5_B5_35_83 - Police Spotlight Normal
+F6_11_BF_5A - ROTOR01 Diffuse
+F9_E1_60_01 - Cop License Plate Normal
+FC_F2_BC_FB - Police Lights v3 AO

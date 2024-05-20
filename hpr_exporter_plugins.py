@@ -163,10 +163,33 @@ def apply_mesh_rotation():
 
 
 def getMaterial():
+
     active = bpy.context.active_object
 
     if active and active.type == 'MESH':
+        material = active.active_material
+
+        if material and not material.use_nodes:
+            material.use_nodes = True
+
         return active.active_material
+    
+    else:
+        return None
+    
+
+def createImageNode(mat, node_name, node_image):
+
+    nodes = mat.node_tree.nodes
+
+    image_node = nodes.new(type = 'ShaderNodeTexImage')
+    image_node.name = node_name
+
+    if bpy.data.images.get(node_image):
+        image_node.image = bpy.data.images.get(node_image)
+    else:
+        print("Unable to find image " + node_image)
+        return
 
 
 #Main Menu
@@ -190,6 +213,16 @@ class SUB_MENU_CAR(bpy.types.Menu):
         layout = self.layout
         layout.operator("initialize.scene", icon = "OUTLINER_COLLECTION")
         layout.operator("assign.empty", icon = "EMPTY_AXIS")
+        layout.menu("SUB_MENU_MATERIAL_VEHICLE", icon = "MATERIAL")
+
+class SUB_MENU_MATERIAL_VEHICLE(bpy.types.Menu):
+
+    bl_idname = "SUB_MENU_MATERIAL_VEHICLE"
+    bl_label = "Vehicle Material Templates"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("mat_veh.glass")
 
 
 #Operators
@@ -298,13 +331,37 @@ class Assign_Empty(bpy.types.Operator):
             self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
             
         return {'FINISHED'}
+    
+
+class material_Glass(bpy.types.Operator):
+
+    bl_idname = "mat_veh.glass"
+    bl_label = "Glass"
+    bl_description = "Material for glass."
+
+    def execute(self, context):
+
+        status = 0
+        mat = getMaterial()
+
+        if mat:
+            mat["resource_type"] = "Vehicle_Glass_Emissive_Coloured"
+            mat.name = "Glass_" + mat.name
+            createImageNode(mat, "EmissiveTextureSampler", '11_BF_74_F7.dds') #testing
+
+        return {'FINISHED'}
+
+
+
         
         
 register_classes = (
     MAIN_MENU_HP_EXPORTER_PLUGINS,
     SUB_MENU_CAR,
+    SUB_MENU_MATERIAL_VEHICLE,
     Initialize_Scene,
     Assign_Empty,
+    material_Glass,
 )
 
 def menu_func(self, context):
