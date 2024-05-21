@@ -178,7 +178,7 @@ def getMaterial():
         return None
     
 
-def createImageNode(mat, node_name, node_image):
+def createImageNode(mat, node_name, node_image = 'null'):
 
     nodes = mat.node_tree.nodes
 
@@ -189,7 +189,28 @@ def createImageNode(mat, node_name, node_image):
         image_node.image = bpy.data.images.get(node_image)
     else:
         print("Unable to find image " + node_image)
-        return
+    
+    node_locations = {
+        "NormalTextureSampler": (-300, 300),
+        "DiffuseTextureSampler": (-300, 0),
+        "AoMapTextureSampler": (-300, -300),
+        "ScratchTextureSampler": (-600, 300),
+        "LightmapLightsTextureSampler": (-600, 0),
+        "CrackedGlassTextureSampler": (-600, -300),
+        "CrackedGlassNormalTextureSampler": (500, 300),
+        "EmissiveTextureSampler": (500, 0),
+        "CrumpleTextureSampler": (500, -300),
+        "ExternalNormalTextureSampler": (800, 300),
+        "InternalNormalTextureSampler": (800, 0),
+        "DisplacementSampler": (800, -300),
+        "DiffuseSampler": (800, -600),
+        "BlurNormalTextureSampler": (500, -600),
+        "BlurDiffuseTextureSampler": (200, -600),
+        "SpecularAndAOTextureSampler": (-100, -600),
+        "BlurSpecularAndAOTextureSampler": (-400, -600),
+    }
+    
+    image_node.location = node_locations.get(node_name, (0, 0))
     
 
 def createMaterialCustomProperty(mat, name, values):
@@ -202,6 +223,7 @@ def createMaterialCustomProperty(mat, name, values):
                 'mCrackedGlassSpecularColour', 'BrakeColour', 'RunningColour', 'mGlassColour', 'OverlayA_Diffuse', 'DiffuseB',
                 'OverlayB_Diffuse', 'DiffuseA', 'Colour', 'gEmissiveColour', 'tiling1Diffuse', 'tiling3Diffuse', 'tiling2Diffuse',
                 'decal_Diffuse', 'mMaterialDiffuse', 'Line_Diffuse', 'DiffuseColour', 'EmissiveColour', 'algaeColour', 'mExternalGlassColour'):
+        
         property_manager = mat.id_properties_ui(name)
         property_manager.update(subtype='COLOR')
 
@@ -355,7 +377,6 @@ class material_Glass(bpy.types.Operator):
 
     def execute(self, context):
 
-        status = 0
         mat = getMaterial()
 
         if mat:
@@ -366,7 +387,6 @@ class material_Glass(bpy.types.Operator):
             createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
             createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
 
-            #check nbmc values
             createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
             createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
             createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
@@ -379,6 +399,26 @@ class material_Glass(bpy.types.Operator):
             createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
 
         return {'FINISHED'}
+
+
+class material_GlassRed(bpy.types.Operator):
+
+    bl_idname = "mat_veh.glassred"
+    bl_label = "GlassRed (Taillights)"
+    bl_description = "Material for taillights glass."
+
+    def execute(self, context):
+
+        mat = getMaterial()
+
+        if mat:
+            mat["shader_type"] = "Vehicle_Glass_LocalEmissive_Coloured"
+            mat.name = "GlassRed_" + mat.name
+
+            createImageNode(mat, "NormalTextureSampler", 'E7_A5_A4_93.dds')
+            createImageNode(mat, "DiffuseTextureSampler")
+            createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+            createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
 
 
 register_classes = (
