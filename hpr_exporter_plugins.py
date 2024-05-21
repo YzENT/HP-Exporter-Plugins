@@ -190,6 +190,20 @@ def createImageNode(mat, node_name, node_image):
     else:
         print("Unable to find image " + node_image)
         return
+    
+
+def createMaterialCustomProperty(mat, name, values):
+    if name not in mat:
+        mat[name] = values  #Values should be array of size 4
+
+    #arigato
+    if name in ('DirtTint', 'materialDiffuse', 'LightmappedLightsGreenChannelColour', 'LightmappedLightsBlueChannelColour',
+                'LightmappedLightsRedChannelColour', 'window_Tint', 'pearlescentColour', 'ReversingColour', 'UnusedColour',
+                'mCrackedGlassSpecularColour', 'BrakeColour', 'RunningColour', 'mGlassColour', 'OverlayA_Diffuse', 'DiffuseB',
+                'OverlayB_Diffuse', 'DiffuseA', 'Colour', 'gEmissiveColour', 'tiling1Diffuse', 'tiling3Diffuse', 'tiling2Diffuse',
+                'decal_Diffuse', 'mMaterialDiffuse', 'Line_Diffuse', 'DiffuseColour', 'EmissiveColour', 'algaeColour', 'mExternalGlassColour'):
+        property_manager = mat.id_properties_ui(name)
+        property_manager.update(subtype='COLOR')
 
 
 #Main Menu
@@ -345,16 +359,28 @@ class material_Glass(bpy.types.Operator):
         mat = getMaterial()
 
         if mat:
-            mat["resource_type"] = "Vehicle_Glass_Emissive_Coloured"
+            mat["shader_type"] = "Vehicle_Glass_Emissive_Coloured"
             mat.name = "Glass_" + mat.name
-            createImageNode(mat, "EmissiveTextureSampler", '11_BF_74_F7.dds') #testing
+
+            createImageNode(mat, "EmissiveTextureSampler", '89_20_8C_6D.dds')
+            createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
+            createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
+
+            #check nbmc values
+            createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
+            createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+            createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
+            createMaterialCustomProperty(mat, "RunningColour", [0.07035999745130539, 0.07035999745130539, 0.07035999745130539, 1.0])
+            createMaterialCustomProperty(mat, "UnusedColour", [0.0, 0.0, 0.0, 1.0])
+            createMaterialCustomProperty(mat, "mCrackedGlassSpecularColour", [0.19599999487400055, 0.6549999713897705, 0.7879999876022339, 1.0])
+            createMaterialCustomProperty(mat, "mCrackedGlassSpecularControls", [0.10999999940395355, 3.5, 1.0, 0.0])
+            createMaterialCustomProperty(mat, "mGlassColour", [0.0, 0.0, 0.0, 1.0])
+            createMaterialCustomProperty(mat, "mGlassControls", [0.03999999910593033, 1.0, 3.0, 0.9900000095367432])
+            createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
 
         return {'FINISHED'}
 
 
-
-        
-        
 register_classes = (
     MAIN_MENU_HP_EXPORTER_PLUGINS,
     SUB_MENU_CAR,
