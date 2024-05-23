@@ -269,6 +269,7 @@ class SUB_MENU_MATERIAL_VEHICLE(bpy.types.Menu):
         layout = self.layout
         layout.operator("mat_veh.glass")
         layout.operator("mat_veh.glassred")
+        layout.operator("mat_veh.glasslivery")
 
 
 #Operators
@@ -410,7 +411,7 @@ class material_Glass(bpy.types.Operator):
             status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
 
         if status == 0:
-            self.report({'INFO'}, "Successfully applied material template Glass to selected material.")
+            self.report({'INFO'}, "Successfully applied material template \'Glass\' to selected material.")
         else:
             self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
 
@@ -448,11 +449,49 @@ class material_GlassRed(bpy.types.Operator):
             status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
 
         if status == 0:
-            self.report({'INFO'}, "Successfully applied material template Glass to selected material.")
+            self.report({'INFO'}, "Successfully applied material template \'GlassRed\' to selected material.")
         else:
             self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
 
         return {'FINISHED'}
+    
+
+class material_GlassLivery(bpy.types.Operator):
+
+    bl_idname = "mat_veh.glasslivery"
+    bl_label = "GlassLivery"
+    bl_description = "Material for glass that supports wrap editing."
+
+    def execute(self, context):
+
+        status = 0
+        mat = getMaterial()
+
+        if mat:
+            mat["shader_type"] = "Vehicle_Glass_Emissive_Coloured_Singlesided_Wrap"
+            mat.name = "GlassRed_" + mat.name
+
+            status += createImageNode(mat, "EmissiveTextureSampler", '89_20_8C_6D.dds')
+            status += createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
+            status += createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
+
+            status += createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
+            status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+            status += createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
+            status += createMaterialCustomProperty(mat, "RunningColour", [0.07035999745130539, 0.07035999745130539, 0.07035999745130539, 1.0])
+            status += createMaterialCustomProperty(mat, "UnusedColour", [0.0, 0.0, 0.0, 1.0])
+            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularColour", [0.19599999487400055, 0.6549999713897705, 0.7879999876022339, 1.0])
+            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularControls", [0.10999999940395355, 3.5, 1.0, 0.0])
+            status += createMaterialCustomProperty(mat, "mGlassColour", [0.0, 0.0, 0.0, 1.0])
+            status += createMaterialCustomProperty(mat, "mGlassControls", [0.03999999910593033, 1.0, 3.0, 0.9900000095367432])
+            status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+
+        if status == 0:
+            self.report({'INFO'}, "Successfully applied material template \'GlassLivery\' to selected material.")
+        else:
+            self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
+
+        return {'FINISHED'}    
 
 
 register_classes = (
@@ -463,6 +502,7 @@ register_classes = (
     Assign_Empty,
     material_Glass,
     material_GlassRed,
+    material_GlassLivery,
 )
 
 def menu_func(self, context):
