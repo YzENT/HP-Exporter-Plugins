@@ -187,7 +187,8 @@ def createImageNode(mat, node_name, node_image = 'null'):
         if bpy.data.images.get(node_image):
             image_node.image = bpy.data.images.get(node_image)
         else:
-            print("Unable to find image " + node_image)
+            print("Unable to find image " + node_image + "for " + node_name)
+            return -1
         image_node.location = (0, 0)
         return 0
     else:
@@ -267,6 +268,7 @@ class SUB_MENU_MATERIAL_VEHICLE(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator("mat_veh.glass")
+        layout.operator("mat_veh.glassred")
 
 
 #Operators
@@ -418,21 +420,39 @@ class material_Glass(bpy.types.Operator):
 class material_GlassRed(bpy.types.Operator):
 
     bl_idname = "mat_veh.glassred"
-    bl_label = "GlassRed (Taillights)"
-    bl_description = "Material for taillights glass."
+    bl_label = "GlassRed (Taillight Glass)"
+    bl_description = "Material for taillight glass (edited to be red)."
 
     def execute(self, context):
 
+        status = 0
         mat = getMaterial()
 
         if mat:
-            mat["shader_type"] = "Vehicle_Glass_LocalEmissive_Coloured"
+            mat["shader_type"] = "Vehicle_Glass_Emissive_Coloured"
             mat.name = "GlassRed_" + mat.name
 
-            createImageNode(mat, "NormalTextureSampler", 'E7_A5_A4_93.dds')
-            createImageNode(mat, "DiffuseTextureSampler")
-            createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
-            createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+            status += createImageNode(mat, "EmissiveTextureSampler", '89_20_8C_6D.dds')
+            status += createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
+            status += createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
+
+            status += createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
+            status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+            status += createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
+            status += createMaterialCustomProperty(mat, "RunningColour", [0.0822829976677895, 0.00367700005881488, 0.00439100014045835, 1.0])
+            status += createMaterialCustomProperty(mat, "UnusedColour", [0.0, 0.0, 0.0, 1.0])
+            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularColour", [0.19599999487400055, 0.6549999713897705, 0.7879999876022339, 1.0])
+            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularControls", [0.10999999940395355, 3.5, 1.0, 0.0])
+            status += createMaterialCustomProperty(mat, "mGlassColour", [1.0, 0.0, 0.0, 1.0])
+            status += createMaterialCustomProperty(mat, "mGlassControls", [0.0149999996647239, 0.600000023841858, 3.0, 0.800000011920929])
+            status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+
+        if status == 0:
+            self.report({'INFO'}, "Successfully applied material template Glass to selected material.")
+        else:
+            self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
+
+        return {'FINISHED'}
 
 
 register_classes = (
@@ -442,6 +462,7 @@ register_classes = (
     Initialize_Scene,
     Assign_Empty,
     material_Glass,
+    material_GlassRed,
 )
 
 def menu_func(self, context):

@@ -35,7 +35,7 @@ This list is personalized. Do not follow by all means.
 96_52_84_5A - ROTOR01 Normal
 A1_D7_D6_81 - Police Lights Diffuse
 A2_1B_B3_CA - Police HighwayPatrol Sheriff SheriffElite Livery
-A7_B6_FB_7C - White Diffuse
+A7_B6_FB_7C - White Diffuse (default ao?)
 AA_35_F8_D4 - Police Lights v3 Diffuse
 AB_10_77_F8 - Police Modern Rapid Livery
 BE_12_78_F1 - Cracked Glass
