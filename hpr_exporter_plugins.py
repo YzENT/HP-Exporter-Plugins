@@ -184,12 +184,14 @@ def createImageNode(mat, node_name, node_image = 'null'):
         nodes = mat.node_tree.nodes
         image_node = nodes.new(type = 'ShaderNodeTexImage')
         image_node.name = node_name
+        image_node.location = (0, 0)
         if bpy.data.images.get(node_image):
             image_node.image = bpy.data.images.get(node_image)
+        elif node_image == 'null':
+            return 0
         else:
             print("Unable to find image " + node_image + "for " + node_name)
             return -1
-        image_node.location = (0, 0)
         return 0
     else:
         print("Failed to create as material" + mat.name + "is null")
@@ -271,6 +273,7 @@ class SUB_MENU_MATERIAL_VEHICLE(bpy.types.Menu):
         layout.operator("mat_veh.glassred")
         layout.operator("mat_veh.glasslivery")
         layout.operator("mat_veh.glasssurround")
+        layout.operator("mat_veh.interior")
 
 
 #Operators
@@ -499,7 +502,7 @@ class material_GlassSurround(bpy.types.Operator):
 
     bl_idname = "mat_veh.glasssurround"
     bl_label = "GlassSurround"
-    bl_description = "Material for glass that surrounds the windshield."
+    bl_description = "Material for glass that surrounds the windshield, livery is supported."
 
     def execute(self, context):
 
@@ -530,7 +533,37 @@ class material_GlassSurround(bpy.types.Operator):
         else:
             self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
 
-        return {'FINISHED'}     
+        return {'FINISHED'} 
+    
+
+class material_Interior(bpy.types.Operator):
+
+    bl_idname = "mat_veh.interior"
+    bl_label = "Interior"
+    bl_description = "Material for interior that doesn't support emissive nor transparency."
+
+    def execute(self, context):
+
+        status = 0
+        mat = getMaterial()
+
+        if mat:
+            mat["shader_type"] = "Vehicle_Opaque_Textured_Phong"
+            mat.name = "Interior_" + mat.name
+
+            status += createImageNode(mat, "DiffuseTextureSampler")
+
+            status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 1.0, 1.0])
+            status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [1.0, 0.699999988079071, 0.0, 0.0])
+            status += createMaterialCustomProperty(mat, "mSpecularControls", [0.0500000007450581, 0.850000023841858, 2.0, 1.0])
+            status += createMaterialCustomProperty(mat, "materialDiffuse", [0.00150000001303852, 0.0, 0.0, 0.0])
+
+        if status == 0:
+            self.report({'INFO'}, "Successfully applied material template \'Interior\' to selected material.")
+        else:
+            self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
+
+        return {'FINISHED'}
 
 
 register_classes = (
@@ -543,6 +576,7 @@ register_classes = (
     material_GlassRed,
     material_GlassLivery,
     material_GlassSurround,
+    material_Interior,
 )
 
 def menu_func(self, context):
@@ -559,9 +593,3 @@ def unregister():
     bpy.types.VIEW3D_MT_add.remove(menu_func)
     for items in register_classes:
         bpy.utils.unregister_class(items)
-        
-        
-
-        
-        
-        
