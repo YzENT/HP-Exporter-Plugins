@@ -185,16 +185,17 @@ def createImageNode(mat, node_name, node_image = 'null'):
         image_node = nodes.new(type = 'ShaderNodeTexImage')
         image_node.name = node_name
         image_node.location = (0, 0)
+
         if bpy.data.images.get(node_image):
             image_node.image = bpy.data.images.get(node_image)
         elif node_image == 'null':
             return 0
         else:
-            print("Unable to find image " + node_image + "for " + node_name)
+            print("Unable to find image " + node_image + " for " + node_name)
             return -1
         return 0
     else:
-        print("Failed to create as material" + mat.name + "is null")
+        print("Failed to create as " + mat.name + " is null")
         return -1
     
     # node_locations = {
@@ -223,16 +224,16 @@ def createMaterialCustomProperty(mat, name, values):
     if name not in mat:
         mat[name] = values  #Values should be array of size 4
     else:
-        print(name + "already exists in Material: " + mat.name)
+        print(name + " already exists in Material: " + mat.name)
         return -1
 
-    #arigato
-    if name in ('DirtTint', 'materialDiffuse', 'LightmappedLightsGreenChannelColour', 'LightmappedLightsBlueChannelColour',
+    special_names = {'DirtTint', 'materialDiffuse', 'LightmappedLightsGreenChannelColour', 'LightmappedLightsBlueChannelColour',
                 'LightmappedLightsRedChannelColour', 'window_Tint', 'pearlescentColour', 'ReversingColour', 'UnusedColour',
                 'mCrackedGlassSpecularColour', 'BrakeColour', 'RunningColour', 'mGlassColour', 'OverlayA_Diffuse', 'DiffuseB',
                 'OverlayB_Diffuse', 'DiffuseA', 'Colour', 'gEmissiveColour', 'tiling1Diffuse', 'tiling3Diffuse', 'tiling2Diffuse',
-                'decal_Diffuse', 'mMaterialDiffuse', 'Line_Diffuse', 'DiffuseColour', 'EmissiveColour', 'algaeColour', 'mExternalGlassColour'):
-        
+                'decal_Diffuse', 'mMaterialDiffuse', 'Line_Diffuse', 'DiffuseColour', 'EmissiveColour', 'algaeColour', 'mExternalGlassColour'}
+    
+    if name in special_names:
         property_manager = mat.id_properties_ui(name)
         property_manager.update(subtype='COLOR')
 
@@ -261,6 +262,7 @@ class SUB_MENU_CAR(bpy.types.Menu):
         layout.operator("initialize.scene", icon = "OUTLINER_COLLECTION")
         layout.operator("assign.empty", icon = "EMPTY_AXIS")
         layout.menu("SUB_MENU_MATERIAL_VEHICLE", icon = "MATERIAL")
+
 
 class SUB_MENU_MATERIAL_VEHICLE(bpy.types.Menu):
 
