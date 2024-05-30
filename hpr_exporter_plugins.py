@@ -9,6 +9,8 @@ bl_info = {
     "support": "COMMUNITY"
 }
 
+#Only diffuse no default, other textures like emissives, normals are all default values and have to be changed manually.
+
 import bpy
 import math
 import os
@@ -272,10 +274,11 @@ class SUB_MENU_MATERIAL_VEHICLE(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator("mat_veh.glass")
-        layout.operator("mat_veh.glassred")
-        layout.operator("mat_veh.glasslivery")
-        layout.operator("mat_veh.glasssurround")
+        layout.operator("mat_veh.glass_red")
+        layout.operator("mat_veh.glass_livery")
+        layout.operator("mat_veh.glass_surround")
         layout.operator("mat_veh.interior")
+        layout.operator("mat_veh.interior_emissive")
 
 
 #Operators
@@ -426,7 +429,7 @@ class material_Glass(bpy.types.Operator):
 
 class material_GlassRed(bpy.types.Operator):
 
-    bl_idname = "mat_veh.glassred"
+    bl_idname = "mat_veh.glass_red"
     bl_label = "GlassRed (Taillight Glass)"
     bl_description = "Material for taillight glass (edited to be red)."
 
@@ -464,7 +467,7 @@ class material_GlassRed(bpy.types.Operator):
 
 class material_GlassLivery(bpy.types.Operator):
 
-    bl_idname = "mat_veh.glasslivery"
+    bl_idname = "mat_veh.glass_livery"
     bl_label = "GlassLivery"
     bl_description = "Material for glass that supports wrap editing."
 
@@ -502,7 +505,7 @@ class material_GlassLivery(bpy.types.Operator):
 
 class material_GlassSurround(bpy.types.Operator):
 
-    bl_idname = "mat_veh.glasssurround"
+    bl_idname = "mat_veh.glass_surround"
     bl_label = "GlassSurround"
     bl_description = "Material for glass that surrounds the windshield, livery is supported."
 
@@ -568,6 +571,44 @@ class material_Interior(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class material_InteriorEmissive(bpy.types.Operator):
+
+    bl_idname = "mat_veh.interior_emissive"
+    bl_label = "InteriorEmissive"
+    bl_description = "Material for emissives part in interior."
+
+    def execute(self, context):
+
+        status = 0
+        mat = getMaterial()
+
+        if mat:
+            mat["shader_type"] = "Vehicle_Opaque_Textured_NormalMapped_Emissive_AO"
+            mat.name = "InteriorEmissive_" + mat.name
+
+            status += createImageNode(mat, "NormalTextureSampler", 'E7_A5_A4_93.dds')
+            status += createImageNode(mat, "DiffuseTextureSampler")
+            status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+            status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+            status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 0.0, 0.0])
+            status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+            status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+            status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+            status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+            status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
+            status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+            status += createMaterialCustomProperty(mat, "mSpecularControls", [0.05000000074505806, 0.10000000149011612, 4.0, 0.0])
+            status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
+
+        if status == 0:
+            self.report({'INFO'}, "Successfully applied material template \'Interior\' to selected material.")
+        else:
+            self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
+
+        return {'FINISHED'}
+
+
 register_classes = (
     MAIN_MENU_HP_EXPORTER_PLUGINS,
     SUB_MENU_CAR,
@@ -579,6 +620,7 @@ register_classes = (
     material_GlassLivery,
     material_GlassSurround,
     material_Interior,
+    material_InteriorEmissive,
 )
 
 def menu_func(self, context):
