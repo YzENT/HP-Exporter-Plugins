@@ -15,7 +15,7 @@ import bpy
 import math
 import os
 from bpy.types import Operator
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty
 
 
 def clear_scene():
@@ -59,7 +59,6 @@ def clear_scene():
             bpy.data.collections.remove(block, do_unlink=True)
             
     return 0
-
     
 def import_default_hp_textures():
 
@@ -79,8 +78,7 @@ def import_default_hp_textures():
         print("Could not find folder HP_DefaultTextures.")
         return -1
         
-    return 0
-        
+    return 0   
         
 def setup_vehicle_id(car_id):
 
@@ -107,13 +105,11 @@ def setup_vehicle_id(car_id):
         print("Collection already exists.")
         return -1
         
-    return 0
-        
+    return 0    
         
 def only_selected_mesh():
 
-    return [obj for obj in bpy.context.selected_objects if obj.type == 'MESH']
-        
+    return [obj for obj in bpy.context.selected_objects if obj.type == 'MESH']    
         
 def apply_mesh_rotation():
 
@@ -163,7 +159,6 @@ def apply_mesh_rotation():
             
     return 0
 
-
 def getMaterial():
 
     active = bpy.context.active_object
@@ -177,8 +172,7 @@ def getMaterial():
         return active.active_material
     
     else:
-        return None
-    
+        return None 
 
 def createImageNode(mat, node_name, node_image = 'null'):
 
@@ -221,8 +215,8 @@ def createImageNode(mat, node_name, node_image = 'null'):
     # }
     # image_node.location = node_locations.get(node_name, (0, 0))
 
-
 def createMaterialCustomProperty(mat, name, values):
+
     if name not in mat:
         mat[name] = values  #Values should be array of size 4
     else:
@@ -241,6 +235,147 @@ def createMaterialCustomProperty(mat, name, values):
 
     return 0
 
+def material_Glass(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Glass_Emissive_Coloured"
+        mat.name = "Glass_" + mat.name
+
+        status += createImageNode(mat, "EmissiveTextureSampler", '89_20_8C_6D.dds')
+        status += createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
+        status += createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
+
+        status += createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "RunningColour", [0.07035999745130539, 0.07035999745130539, 0.07035999745130539, 1.0])
+        status += createMaterialCustomProperty(mat, "UnusedColour", [0.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularColour", [0.19599999487400055, 0.6549999713897705, 0.7879999876022339, 1.0])
+        status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularControls", [0.10999999940395355, 3.5, 1.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mGlassColour", [0.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "mGlassControls", [0.03999999910593033, 1.0, 3.0, 0.9900000095367432])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+
+    return status, "Glass"
+
+def material_GlassRed(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Glass_Emissive_Coloured"
+        mat.name = "GlassRed_" + mat.name
+
+        status += createImageNode(mat, "EmissiveTextureSampler", '89_20_8C_6D.dds')
+        status += createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
+        status += createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
+
+        status += createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "RunningColour", [0.0822829976677895, 0.00367700005881488, 0.00439100014045835, 1.0])
+        status += createMaterialCustomProperty(mat, "UnusedColour", [0.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularColour", [0.19599999487400055, 0.6549999713897705, 0.7879999876022339, 1.0])
+        status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularControls", [0.10999999940395355, 3.5, 1.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mGlassColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "mGlassControls", [0.0149999996647239, 0.600000023841858, 3.0, 0.800000011920929])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+
+    return status, "GlassRed"
+
+def material_GlassLivery(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Glass_Emissive_Coloured_Singlesided_Wrap"
+        mat.name = "GlassRed_" + mat.name
+
+        status += createImageNode(mat, "EmissiveTextureSampler", '89_20_8C_6D.dds')
+        status += createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
+        status += createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
+
+        status += createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "RunningColour", [0.07035999745130539, 0.07035999745130539, 0.07035999745130539, 1.0])
+        status += createMaterialCustomProperty(mat, "UnusedColour", [0.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularColour", [0.19599999487400055, 0.6549999713897705, 0.7879999876022339, 1.0])
+        status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularControls", [0.10999999940395355, 3.5, 1.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mGlassColour", [0.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "mGlassControls", [0.03999999910593033, 1.0, 3.0, 0.9900000095367432])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+
+    return status, "GlassLivery"
+
+def material_GlassSurround(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Glass_Emissive_Coloured_Singlesided_Wrap"
+        mat.name = "GlassSurround_" + mat.name
+
+        status += createImageNode(mat, "EmissiveTextureSampler", '89_20_8C_6D.dds')
+        status += createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
+        status += createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
+
+        status += createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "RunningColour", [0.07035999745130539, 0.07035999745130539, 0.07035999745130539, 1.0])
+        status += createMaterialCustomProperty(mat, "UnusedColour", [0.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularColour", [0.19599999487400055, 0.6549999713897705, 0.7879999876022339, 1.0])
+        status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularControls", [0.10999999940395355, 3.5, 1.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mGlassColour", [0.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "mGlassControls", [0.03999999910593033, 1.0, 3.5, 0.7400000095367432])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+
+    return status, "GlassSurround"
+
+def material_Interior(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_Textured_Phong"
+        mat.name = "Interior_" + mat.name
+
+        status += createImageNode(mat, "DiffuseTextureSampler")
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [1.0, 0.699999988079071, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.0500000007450581, 0.850000023841858, 2.0, 1.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [0.00150000001303852, 0.0, 0.0, 0.0])
+
+    return status, "Interior"
+
+def material_InteriorEmissive(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_Textured_NormalMapped_Emissive_AO"
+        mat.name = "InteriorEmissive_" + mat.name
+
+        status += createImageNode(mat, "NormalTextureSampler", 'E7_A5_A4_93.dds')
+        status += createImageNode(mat, "DiffuseTextureSampler")
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.05000000074505806, 0.10000000149011612, 4.0, 0.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
+
+    return status, "InteriorEmissive"
 
 #Main Menu
 class MAIN_MENU_HP_EXPORTER_PLUGINS(bpy.types.Menu):
@@ -263,22 +398,7 @@ class SUB_MENU_CAR(bpy.types.Menu):
         layout = self.layout
         layout.operator("initialize.scene", icon = "OUTLINER_COLLECTION")
         layout.operator("assign.empty", icon = "EMPTY_AXIS")
-        layout.menu("SUB_MENU_MATERIAL_VEHICLE", icon = "MATERIAL")
-
-
-class SUB_MENU_MATERIAL_VEHICLE(bpy.types.Menu):
-
-    bl_idname = "SUB_MENU_MATERIAL_VEHICLE"
-    bl_label = "Vehicle Material Templates"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("mat_veh.glass")
-        layout.operator("mat_veh.glass_red")
-        layout.operator("mat_veh.glass_livery")
-        layout.operator("mat_veh.glass_surround")
-        layout.operator("mat_veh.interior")
-        layout.operator("mat_veh.interior_emissive")
+        layout.operator("material.vehicle", icon = "MATERIAL")
 
 
 #Operators
@@ -318,10 +438,13 @@ class Initialize_Scene(bpy.types.Operator):
         col.label(text="Preferences", icon="OPTIONS")
         
         box.prop(self, "clear_scene")
-        box.prop(self, "import_default_textures")
-        
+
         if self.clear_scene:
             box.prop(self, "car_id")
+
+        row = box.row()
+        row.enabled = False
+        row.prop(self, "import_default_textures")
         
     def invoke(self, context, event):
         wm = context.window_manager
@@ -387,240 +510,77 @@ class Assign_Empty(bpy.types.Operator):
             self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
             
         return {'FINISHED'}
-    
-
-class material_Glass(bpy.types.Operator):
-
-    bl_idname = "mat_veh.glass"
-    bl_label = "Glass"
-    bl_description = "Material for glass."
-
-    def execute(self, context):
-
-        status = 0
-        mat = getMaterial()
-
-        if mat:
-            mat["shader_type"] = "Vehicle_Glass_Emissive_Coloured"
-            mat.name = "Glass_" + mat.name
-
-            status += createImageNode(mat, "EmissiveTextureSampler", '89_20_8C_6D.dds')
-            status += createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
-            status += createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
-
-            status += createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
-            status += createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
-            status += createMaterialCustomProperty(mat, "RunningColour", [0.07035999745130539, 0.07035999745130539, 0.07035999745130539, 1.0])
-            status += createMaterialCustomProperty(mat, "UnusedColour", [0.0, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularColour", [0.19599999487400055, 0.6549999713897705, 0.7879999876022339, 1.0])
-            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularControls", [0.10999999940395355, 3.5, 1.0, 0.0])
-            status += createMaterialCustomProperty(mat, "mGlassColour", [0.0, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "mGlassControls", [0.03999999910593033, 1.0, 3.0, 0.9900000095367432])
-            status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
-
-        if status == 0:
-            self.report({'INFO'}, "Successfully applied material template \'Glass\' to selected material.")
-        else:
-            self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
-
-        return {'FINISHED'}
 
 
-class material_GlassRed(bpy.types.Operator):
+class Material_Vehicles(bpy.types.Operator):
 
-    bl_idname = "mat_veh.glass_red"
-    bl_label = "GlassRed (Taillight Glass)"
-    bl_description = "Material for taillight glass (edited to be red)."
+    bl_idname = "material.vehicle"
+    bl_label = "Vehicle Material Templates"
+
+    enum_mat_name: bpy.props.EnumProperty(
+
+        name = "Setting",
+        description = "Choose a material template",
+
+        items=[
+            ('Glass', "Glass", "Material for glass"),
+            ('Glass_Red', "GlassRed (Taillight Glass)", "Material for taillight glass (Red)"),
+            ('Glass_Livery', "GlassLivery", "Material for glass that supports wrap editing"),
+            ('Glass_Surround', "GlassSurround", "Material for glass that surrounds the windshield, livery is supported"),
+            ('Interior', "Interior", "Material for interior that doesn't support emissive nor transparency"),
+            ('Interior_Emissive', "InteriorEmissive", "Material for emissives part in interior"),
+        ],
+
+        default = 'Glass'
+
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = False
+        layout.use_property_decorate = False  # No animation.
+        
+        ##
+        box = layout.box()
+        split = box.split(factor=0.75)
+        col = split.column(align=True)
+        col.label(text="Preferences", icon="OPTIONS")
+        
+        box.prop(self, "enum_mat_name")
+        
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self, width = 250)
 
     def execute(self, context):
 
-        status = 0
-        mat = getMaterial()
-
-        if mat:
-            mat["shader_type"] = "Vehicle_Glass_Emissive_Coloured"
-            mat.name = "GlassRed_" + mat.name
-
-            status += createImageNode(mat, "EmissiveTextureSampler", '89_20_8C_6D.dds')
-            status += createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
-            status += createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
-
-            status += createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
-            status += createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
-            status += createMaterialCustomProperty(mat, "RunningColour", [0.0822829976677895, 0.00367700005881488, 0.00439100014045835, 1.0])
-            status += createMaterialCustomProperty(mat, "UnusedColour", [0.0, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularColour", [0.19599999487400055, 0.6549999713897705, 0.7879999876022339, 1.0])
-            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularControls", [0.10999999940395355, 3.5, 1.0, 0.0])
-            status += createMaterialCustomProperty(mat, "mGlassColour", [1.0, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "mGlassControls", [0.0149999996647239, 0.600000023841858, 3.0, 0.800000011920929])
-            status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
-
-        if status == 0:
-            self.report({'INFO'}, "Successfully applied material template \'GlassRed\' to selected material.")
-        else:
-            self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
-
-        return {'FINISHED'}
-    
-
-class material_GlassLivery(bpy.types.Operator):
-
-    bl_idname = "mat_veh.glass_livery"
-    bl_label = "GlassLivery"
-    bl_description = "Material for glass that supports wrap editing."
-
-    def execute(self, context):
+        option_functions = {
+            'Glass': material_Glass,
+            'Glass_Red': material_GlassRed,
+            'Glass_Livery' : material_GlassLivery,
+            'Glass_Surround' : material_GlassSurround,
+            'Interior' : material_Interior,
+            'Interior_Emissive' : material_InteriorEmissive,
+        }
 
         status = 0
         mat = getMaterial()
-
-        if mat:
-            mat["shader_type"] = "Vehicle_Glass_Emissive_Coloured_Singlesided_Wrap"
-            mat.name = "GlassRed_" + mat.name
-
-            status += createImageNode(mat, "EmissiveTextureSampler", '89_20_8C_6D.dds')
-            status += createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
-            status += createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
-
-            status += createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
-            status += createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
-            status += createMaterialCustomProperty(mat, "RunningColour", [0.07035999745130539, 0.07035999745130539, 0.07035999745130539, 1.0])
-            status += createMaterialCustomProperty(mat, "UnusedColour", [0.0, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularColour", [0.19599999487400055, 0.6549999713897705, 0.7879999876022339, 1.0])
-            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularControls", [0.10999999940395355, 3.5, 1.0, 0.0])
-            status += createMaterialCustomProperty(mat, "mGlassColour", [0.0, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "mGlassControls", [0.03999999910593033, 1.0, 3.0, 0.9900000095367432])
-            status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+        status, description = option_functions[self.enum_mat_name](mat)
 
         if status == 0:
-            self.report({'INFO'}, "Successfully applied material template \'GlassLivery\' to selected material.")
+            self.report({'INFO'}, f"Successfully applied material template {description} to selected material.")
         else:
             self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
-
-        return {'FINISHED'}
-
-
-class material_GlassSurround(bpy.types.Operator):
-
-    bl_idname = "mat_veh.glass_surround"
-    bl_label = "GlassSurround"
-    bl_description = "Material for glass that surrounds the windshield, livery is supported."
-
-    def execute(self, context):
-
-        status = 0
-        mat = getMaterial()
-
-        if mat:
-            mat["shader_type"] = "Vehicle_Glass_Emissive_Coloured_Singlesided_Wrap"
-            mat.name = "GlassSurround_" + mat.name
-
-            status += createImageNode(mat, "EmissiveTextureSampler", '89_20_8C_6D.dds')
-            status += createImageNode(mat, "CrackedGlassTextureSampler", 'BE_12_78_F1.dds')
-            status += createImageNode(mat, "CrackedGlassNormalTextureSampler", '52_5D_C3_15.dds')
-
-            status += createMaterialCustomProperty(mat, "BrakeColour", [0.25, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
-            status += createMaterialCustomProperty(mat, "ReversingColour", [1.0, 1.0, 1.0, 1.0])
-            status += createMaterialCustomProperty(mat, "RunningColour", [0.07035999745130539, 0.07035999745130539, 0.07035999745130539, 1.0])
-            status += createMaterialCustomProperty(mat, "UnusedColour", [0.0, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularColour", [0.19599999487400055, 0.6549999713897705, 0.7879999876022339, 1.0])
-            status += createMaterialCustomProperty(mat, "mCrackedGlassSpecularControls", [0.10999999940395355, 3.5, 1.0, 0.0])
-            status += createMaterialCustomProperty(mat, "mGlassColour", [0.0, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "mGlassControls", [0.03999999910593033, 1.0, 3.5, 0.7400000095367432])
-            status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
-
-        if status == 0:
-            self.report({'INFO'}, "Successfully applied material template \'GlassSurround\' to selected material.")
-        else:
-            self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
-
-        return {'FINISHED'} 
-    
-
-class material_Interior(bpy.types.Operator):
-
-    bl_idname = "mat_veh.interior"
-    bl_label = "Interior"
-    bl_description = "Material for interior that doesn't support emissive nor transparency."
-
-    def execute(self, context):
-
-        status = 0
-        mat = getMaterial()
-
-        if mat:
-            mat["shader_type"] = "Vehicle_Opaque_Textured_Phong"
-            mat.name = "Interior_" + mat.name
-
-            status += createImageNode(mat, "DiffuseTextureSampler")
-
-            status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 1.0, 1.0])
-            status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [1.0, 0.699999988079071, 0.0, 0.0])
-            status += createMaterialCustomProperty(mat, "mSpecularControls", [0.0500000007450581, 0.850000023841858, 2.0, 1.0])
-            status += createMaterialCustomProperty(mat, "materialDiffuse", [0.00150000001303852, 0.0, 0.0, 0.0])
-
-        if status == 0:
-            self.report({'INFO'}, "Successfully applied material template \'Interior\' to selected material.")
-        else:
-            self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
-
-        return {'FINISHED'}
-
-
-class material_InteriorEmissive(bpy.types.Operator):
-
-    bl_idname = "mat_veh.interior_emissive"
-    bl_label = "InteriorEmissive"
-    bl_description = "Material for emissives part in interior."
-
-    def execute(self, context):
-
-        status = 0
-        mat = getMaterial()
-
-        if mat:
-            mat["shader_type"] = "Vehicle_Opaque_Textured_NormalMapped_Emissive_AO"
-            mat.name = "InteriorEmissive_" + mat.name
-
-            status += createImageNode(mat, "NormalTextureSampler", 'E7_A5_A4_93.dds')
-            status += createImageNode(mat, "DiffuseTextureSampler")
-            status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
-            status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
-
-            status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 0.0, 0.0])
-            status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
-            status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
-            status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
-            status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
-            status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
-            status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
-            status += createMaterialCustomProperty(mat, "mSpecularControls", [0.05000000074505806, 0.10000000149011612, 4.0, 0.0])
-            status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
-
-        if status == 0:
-            self.report({'INFO'}, "Successfully applied material template \'Interior\' to selected material.")
-        else:
-            self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
-
+        
         return {'FINISHED'}
 
 
 register_classes = (
     MAIN_MENU_HP_EXPORTER_PLUGINS,
     SUB_MENU_CAR,
-    SUB_MENU_MATERIAL_VEHICLE,
     Initialize_Scene,
     Assign_Empty,
-    material_Glass,
-    material_GlassRed,
-    material_GlassLivery,
-    material_GlassSurround,
-    material_Interior,
-    material_InteriorEmissive,
+    Material_Vehicles,
 )
 
 def menu_func(self, context):
