@@ -377,6 +377,56 @@ def material_InteriorEmissive(mat):
 
     return status, "InteriorEmissive"
 
+def material_Lights(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_Textured_NormalMapped_Reflective_Emissive_AO"
+        mat.name = "Lights_" + mat.name
+
+        status += createImageNode(mat, "NormalTextureSampler", 'E7_A5_A4_93.dds')
+        status += createImageNode(mat, "DiffuseTextureSampler")
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mReflectionControls", [0.0099999997764825820, 0.5, 3.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.05000000074505806, 0.10000000149011612, 4.0, 0.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
+
+    return status, "Lights"
+
+def material_MetalChrome(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_Emissive_Reflective_AO"
+        mat.name = "MetalChrome_" + mat.name
+
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mReflectionControls", [0.0099999997764825820, 0.8500000238, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.05000000074505806, 0.10000000149011612, 4.0, 0.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
+
+    return status, "MetalChrome"
+
 #Main Menu
 class MAIN_MENU_HP_EXPORTER_PLUGINS(bpy.types.Menu):
     
@@ -516,6 +566,7 @@ class Material_Vehicles(bpy.types.Operator):
 
     bl_idname = "material.vehicle"
     bl_label = "Vehicle Material Templates"
+    bl_description = "Material templates for vehicles with pre-tuned values."
 
     enum_mat_name: bpy.props.EnumProperty(
 
@@ -529,6 +580,8 @@ class Material_Vehicles(bpy.types.Operator):
             ('Glass_Surround', "GlassSurround", "Material for glass that surrounds the windshield, livery is supported"),
             ('Interior', "Interior", "Material for interior that doesn't support emissive nor transparency"),
             ('Interior_Emissive', "InteriorEmissive", "Material for emissives part in interior"),
+            ('Lights', "Lights", "Material for lights"),
+            ('Metal_Chrome', "MetalChrome", "Material for metallic chrome"),
         ],
 
         default = 'Glass'
@@ -561,6 +614,8 @@ class Material_Vehicles(bpy.types.Operator):
             'Glass_Surround' : material_GlassSurround,
             'Interior' : material_Interior,
             'Interior_Emissive' : material_InteriorEmissive,
+            'Lights' : material_Lights,
+            'Metal_Chrome' : material_MetalChrome,
         }
 
         status = 0
@@ -574,7 +629,6 @@ class Material_Vehicles(bpy.types.Operator):
         
         return {'FINISHED'}
 
-
 register_classes = (
     MAIN_MENU_HP_EXPORTER_PLUGINS,
     SUB_MENU_CAR,
@@ -586,12 +640,10 @@ register_classes = (
 def menu_func(self, context):
     self.layout.menu(MAIN_MENU_HP_EXPORTER_PLUGINS.bl_idname)
 
-
 def register():
     for items in register_classes:
         bpy.utils.register_class(items)
     bpy.types.VIEW3D_MT_add.append(menu_func)
-
 
 def unregister():
     bpy.types.VIEW3D_MT_add.remove(menu_func)
