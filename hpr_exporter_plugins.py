@@ -426,6 +426,92 @@ def material_MetalChrome(mat):
 
     return status, "MetalChrome"
 
+def material_MetalColorable(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_PaintGloss_Textured_LightmappedLights_Wrap"
+        mat.name = "MetalColorable_" + mat.name
+
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "CrumpleTextureSampler", '11_BF_74_F7.dds')
+        status += createImageNode(mat, "ScratchTextureSampler", '85_68_7E_F0.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mPaintColourIndex", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+
+    return status, "MetalColorable"
+
+def material_MetalLiveryGloss(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_PaintGloss_Textured_LightmappedLights_ColourOverride_Livery"
+        mat.name = "MetalLiveryGloss_" + mat.name
+
+        status += createImageNode(mat, "DiffuseTextureSampler")
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "CrumpleTextureSampler", '11_BF_74_F7.dds')
+        status += createImageNode(mat, "ScratchTextureSampler", '85_68_7E_F0.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mDiffuseFresnel", [1.0, 0.75, 5.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEnvSpecularControls", [1.0, 0.20000000298023224, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mPearlescentPower", [4.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mReflectionControls", [0.0099999997764825820, 0.600000023841858, 5.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mScratchSpecularControls", [0.25, 0.25, 20.0, 0.20000000298023224])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.05000000074505806, 0.10000000149011612, 4.0, 1.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "pearlescentColour", [1.0, 1.0, 1.0, 1.0])
+
+    return status, "MetalLiveryGloss"
+
+def material_MetalLiveryMatte(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_PaintGloss_Textured_LightmappedLights_ColourOverride_Livery"
+        mat.name = "MetalLiveryMatte_" + mat.name
+
+        status += createImageNode(mat, "DiffuseTextureSampler")
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "CrumpleTextureSampler", '11_BF_74_F7.dds')
+        status += createImageNode(mat, "ScratchTextureSampler", '85_68_7E_F0.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mDiffuseFresnel", [1.0, 0.75, 5.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEnvSpecularControls", [1.0, 0.20000000298023224, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "mPearlescentPower", [4.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mReflectionControls", [0.0, 0.0, 5.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mScratchSpecularControls", [0.25, 0.25, 20.0, 0.20000000298023224])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.100000001490116, 0.10000000149011612, 4.0, 1.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "pearlescentColour", [1.0, 1.0, 1.0, 1.0])
+
+    return status, "MetalLiveryMatte"
+
 #Main Menu
 class EXPORTER_PLUGINS_MT_HPR(bpy.types.Menu):
     
@@ -577,6 +663,9 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
             ('Interior_Emissive', "InteriorEmissive", "Material for emissives part in interior"),
             ('Lights', "Lights", "Material for lights"),
             ('Metal_Chrome', "MetalChrome", "Material for metallic chrome"),
+            ('Metal_Colorable', "MetalColorable", "Material for vehicle paint which supports livery editing"),
+            ('Metal_Livery_Gloss', "MetalLiveryGloss", "Material for glossy looking diffuse"),
+            ('Metal_Livery_Matte', "MetalLiveryMatte", "Material for matte looking diffuse"),
         ],
 
         default = 'Glass'
@@ -611,6 +700,9 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
             'Interior_Emissive' : material_InteriorEmissive,
             'Lights' : material_Lights,
             'Metal_Chrome' : material_MetalChrome,
+            'Metal_Colorable' : material_MetalColorable,
+            'Metal_Livery_Gloss' : material_MetalLiveryGloss,
+            'Metal_Livery_Matte' : material_MetalLiveryMatte,
         }
 
         status = 0
