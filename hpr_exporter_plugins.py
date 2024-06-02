@@ -353,6 +353,33 @@ def material_GlassSurround(mat):
 
     return status, "GlassSurround"
 
+def material_Grille(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_1Bit_Textured_NormalMapped_Emissive_AO_Livery"
+        mat.name = "Grille_" + mat.name
+
+        status += createImageNode(mat, "NormalTextureSampler", 'E7_A5_A4_93.dds')
+        status += createImageNode(mat, "DiffuseTextureSampler")
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "ScratchTextureSampler", '85_68_7E_F0.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [60.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mScratchSpecularControls", [0.009999999776482582, 0.15000000596046448, 5.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [0.0010000000474974513, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.04, 0.7, 35.0, 0.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [0.0, 0.0, 0.0, 1.0])
+
+    return status, "Grille"
+
 def material_Interior(mat):
 
     status = 0
@@ -735,6 +762,7 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
             ('Glass_Red', "GlassRed (Taillight Glass)", "Material for taillight glass (Red)"),
             ('Glass_Livery', "GlassLivery", "Material for glass that supports wrap editing"),
             ('Glass_Surround', "GlassSurround", "Material for glass that surrounds the windshield, livery is supported"),
+            ('Grille', "Grille", "Material for grille, which supports transparency"),
             ('Interior', "Interior", "Material for interior that doesn't support emissive nor transparency"),
             ('Interior_Emissive', "InteriorEmissive", "Material for emissives part in interior"),
             ('Lights', "Lights", "Material for lights"),
@@ -776,6 +804,7 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
             'Glass_Red': material_GlassRed,
             'Glass_Livery' : material_GlassLivery,
             'Glass_Surround' : material_GlassSurround,
+            'Grille' : material_Grille,
             'Interior' : material_Interior,
             'Interior_Emissive' : material_InteriorEmissive,
             'Lights' : material_Lights,
