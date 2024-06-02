@@ -17,7 +17,6 @@ import os
 from bpy.types import Operator
 from bpy.props import BoolProperty, StringProperty, EnumProperty
 
-
 def clear_scene():
 
     for block in bpy.data.objects:
@@ -428,20 +427,19 @@ def material_MetalChrome(mat):
     return status, "MetalChrome"
 
 #Main Menu
-class MAIN_MENU_HP_EXPORTER_PLUGINS(bpy.types.Menu):
+class EXPORTER_PLUGINS_MT_HPR(bpy.types.Menu):
     
-    bl_idname = "MAIN_MENU_HP_EXPORTER_PLUGINS"
+    bl_idname = "EXPORTER_PLUGINS_MT_HPR"
     bl_label = "HP Exporter Plugins"
     
     def draw(self, context):
         layout = self.layout
-        layout.menu("SUB_MENU_CAR", icon = "AUTO")
-        
-        
-#Sub Menu
-class SUB_MENU_CAR(bpy.types.Menu):
+        layout.menu("VEHICLE_SUBMENU_MT_HPR", icon = "AUTO")
 
-    bl_idname = "SUB_MENU_CAR"
+#Sub Menu
+class VEHICLE_SUBMENU_MT_HPR(bpy.types.Menu):
+
+    bl_idname = "VEHICLE_SUBMENU_MT_HPR"
     bl_label = "Vehicle"
     
     def draw(self, context):
@@ -450,9 +448,8 @@ class SUB_MENU_CAR(bpy.types.Menu):
         layout.operator("assign.empty", icon = "EMPTY_AXIS")
         layout.operator("material.vehicle", icon = "MATERIAL")
 
-
 #Operators
-class Initialize_Scene(bpy.types.Operator):
+class Initialize_Scene_OT_HPR(bpy.types.Operator):
     
     bl_idname = "initialize.scene"
     bl_label = "Prepare Collection"
@@ -517,8 +514,7 @@ class Initialize_Scene(bpy.types.Operator):
             
         return {'FINISHED'}
         
-        
-class Assign_Empty(bpy.types.Operator):
+class Assign_Empty_OT_HPR(bpy.types.Operator):
     
     bl_idname = "assign.empty"
     bl_label = "Assign parent to selected mesh"
@@ -561,8 +557,7 @@ class Assign_Empty(bpy.types.Operator):
             
         return {'FINISHED'}
 
-
-class Material_Vehicles(bpy.types.Operator):
+class Material_Vehicles_OT_HPR(bpy.types.Operator):
 
     bl_idname = "material.vehicle"
     bl_label = "Vehicle Material Templates"
@@ -623,22 +618,22 @@ class Material_Vehicles(bpy.types.Operator):
         status, description = option_functions[self.enum_mat_name](mat)
 
         if status == 0:
-            self.report({'INFO'}, f"Successfully applied material template {description} to selected material.")
+            self.report({'INFO'}, f"Successfully applied material template \'{description}\' to selected material.")
         else:
             self.report({'ERROR'}, "An error has occured. Please check console log for more information.")
         
         return {'FINISHED'}
 
 register_classes = (
-    MAIN_MENU_HP_EXPORTER_PLUGINS,
-    SUB_MENU_CAR,
-    Initialize_Scene,
-    Assign_Empty,
-    Material_Vehicles,
+    EXPORTER_PLUGINS_MT_HPR,
+    VEHICLE_SUBMENU_MT_HPR,
+    Initialize_Scene_OT_HPR,
+    Assign_Empty_OT_HPR,
+    Material_Vehicles_OT_HPR,
 )
 
 def menu_func(self, context):
-    self.layout.menu(MAIN_MENU_HP_EXPORTER_PLUGINS.bl_idname)
+    self.layout.menu(EXPORTER_PLUGINS_MT_HPR.bl_idname)
 
 def register():
     for items in register_classes:
