@@ -234,6 +234,25 @@ def createMaterialCustomProperty(mat, name, values):
 
     return 0
 
+def material_Badge(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Greyscale_Textured_Normalmapped_Reflective"
+        mat.name = "Badge_" + mat.name
+
+        status += createImageNode(mat, "NormalTextureSampler", 'E7_A5_A4_93.dds')
+        status += createImageNode(mat, "DiffuseTextureSampler")
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [3.0, 1.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [0.0010000000474974513, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mReflectionControls", [0.013000000268220901, 0.30000001192092896, 3.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.5, 1.0, 60.0, 1.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [0.0, 0.0, 0.0, 1.0])
+
+    return status, "Badge"
+
 def material_Glass(mat):
 
     status = 0
@@ -512,6 +531,62 @@ def material_MetalLiveryMatte(mat):
 
     return status, "MetalLiveryMatte"
 
+def material_MetalSecondaryColouredLivery(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_Two_PaintGloss_Textured_LightmappedLights_Livery_Wrap"
+        mat.name = "MetalSecondaryColouredLivery_" + mat.name
+
+        status += createImageNode(mat, "DiffuseTextureSampler")
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "CrumpleTextureSampler", '11_BF_74_F7.dds')
+        status += createImageNode(mat, "ScratchTextureSampler", '85_68_7E_F0.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+
+    return status, "MetalSecondaryColouredLivery"
+
+def material_OpaqueDULL(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_Textured"
+        mat.name = "OpaqueDULL_" + mat.name
+
+        status += createImageNode(mat, "DiffuseTextureSampler")
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.05000000074505806, 0.10000000149011612, 4.0, 1.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
+
+    return status, "OpaqueDULL"
+
+def material_PlasticBlack(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_Textured_Phong"
+        mat.name = "PlasticBlack_" + mat.name
+
+        status += createImageNode(mat, "DiffuseTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [1.0, 0.699999988079071, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.0500000007450581, 0.850000023841858, 2.0, 1.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [0.00150000001303852, 0.0, 0.0, 0.0])
+
+    return status, "PlasticBlack"
+
 #Main Menu
 class EXPORTER_PLUGINS_MT_HPR(bpy.types.Menu):
     
@@ -655,6 +730,7 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
         description = "Choose a material template",
 
         items=[
+            ('Badge', "Badge", "Material for badges, which supports transparency"),
             ('Glass', "Glass", "Material for glass"),
             ('Glass_Red', "GlassRed (Taillight Glass)", "Material for taillight glass (Red)"),
             ('Glass_Livery', "GlassLivery", "Material for glass that supports wrap editing"),
@@ -666,9 +742,12 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
             ('Metal_Colorable', "MetalColorable", "Material for vehicle paint which supports livery editing"),
             ('Metal_Livery_Gloss', "MetalLiveryGloss", "Material for glossy looking diffuse"),
             ('Metal_Livery_Matte', "MetalLiveryMatte", "Material for matte looking diffuse"),
+            ('Metal_Secondary_Coloured_Livery', "MetalSecondaryColouredLivery", "Material for vehicle paint that has secondary colour setting"),
+            ('Opaque_DULL', "OpaqueDULL", "Material for dull looking diffuse"),
+            ('Plastic_Black', "PlasticBlack", "Material for pure black"),
         ],
 
-        default = 'Glass'
+        default = 'Badge'
 
     )
 
@@ -692,6 +771,7 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
     def execute(self, context):
 
         option_functions = {
+            'Badge' : material_Badge,
             'Glass': material_Glass,
             'Glass_Red': material_GlassRed,
             'Glass_Livery' : material_GlassLivery,
@@ -703,6 +783,9 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
             'Metal_Colorable' : material_MetalColorable,
             'Metal_Livery_Gloss' : material_MetalLiveryGloss,
             'Metal_Livery_Matte' : material_MetalLiveryMatte,
+            'Metal_Secondary_Coloured_Livery' : material_MetalSecondaryColouredLivery,
+            'Opaque_DULL' : material_OpaqueDULL,
+            'Plastic_Black' : material_PlasticBlack,
         }
 
         status = 0
