@@ -751,12 +751,7 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
     bl_label = "Vehicle Material Templates"
     bl_description = "Material templates for vehicles with pre-tuned values."
 
-    enum_mat_name: bpy.props.EnumProperty(
-
-        name = "Setting",
-        description = "Choose a material template",
-
-        items=[
+    enum_items = [
             ('Badge', "Badge", "Material for badges, which supports transparency"),
             ('Glass', "Glass", "Material for glass"),
             ('Glass_Red', "GlassRed (Taillight Glass)", "Material for taillight glass (Red)"),
@@ -773,10 +768,15 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
             ('Metal_Secondary_Coloured_Livery', "MetalSecondaryColouredLivery", "Material for vehicle paint that has secondary colour setting"),
             ('Opaque_DULL', "OpaqueDULL", "Material for dull looking diffuse"),
             ('Plastic_Black', "PlasticBlack", "Material for pure black"),
-        ],
+        ]
 
-        default = 'Badge'
+    #sort list
+    sorted_enum_items = sorted(enum_items, key = lambda item: item[1])
 
+    enum_mat_name: bpy.props.EnumProperty(
+        name = "Setting",
+        description = "Choose a material template",
+        items = sorted_enum_items
     )
 
     def draw(self, context):
