@@ -492,6 +492,61 @@ def material_MetalColorable(mat):
 
     return status, "MetalColorable"
 
+def material_MetalHalfLivery(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_PaintGloss_Textured_LightmappedLights_Livery"
+        mat.name = "MetalHalfLivery_" + mat.name
+
+        status += createImageNode(mat, "DiffuseTextureSampler")
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "CrumpleTextureSampler", '11_BF_74_F7.dds')
+        status += createImageNode(mat, "ScratchTextureSampler", '85_68_7E_F0.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mPaintColourIndex", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+
+    return status, "MetalHalfLivery"
+
+def material_MetalLiveryCarbon(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_PaintGloss_Textured_LightmappedLights_ColourOverride_Livery"
+        mat.name = "MetalLiveryCarbon_" + mat.name
+
+        status += createImageNode(mat, "DiffuseTextureSampler", '90_73_F3_CE.dds')
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "CrumpleTextureSampler", '11_BF_74_F7.dds')
+        status += createImageNode(mat, "ScratchTextureSampler", '85_68_7E_F0.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 0.699999988079071, 1.0, 0.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mDiffuseFresnel", [1.5, 0.0, 4.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEnvSpecularControls", [0.44999998807907104, 0.20000000298023224, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mPearlescentPower", [20.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mReflectionControls", [0.019999999552965164, 0.4000000059604645, 12.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mScratchSpecularControls", [0.4000000059604645, 0.15000000596046448, 50.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [3.0, 0.4000000059604645, 35.0, 0.9800000190734863])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "pearlescentColour", [1.0, 1.0, 1.0, 1.0])
+
+    return status, "MetalLiveryCarbon"
+
 def material_MetalLiveryGloss(mat):
 
     status = 0
@@ -711,8 +766,6 @@ def material_InteriorBadge(mat):
 
     return status, "InteriorBadge"
 
-
-
 #Main Menu
 class EXPORTER_PLUGINS_MT_HPR(bpy.types.Menu):
     
@@ -862,6 +915,8 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
             ('Lights', "Lights", "Material for lights"),
             ('Metal_Chrome', "MetalChrome", "Material for metallic chrome"),
             ('Metal_Colorable', "MetalColorable", "Material for vehicle paint which supports livery editing"),
+            ('Metal_Half_Livery', "MetalHalfLivery", "Material that supports vehicle wrap, transparency area would be paint colour"),
+            ('Metal_Livery_Carbon', "MetalLiveryCarbon", "Material for carbon fiber"),
             ('Metal_Livery_Gloss', "MetalLiveryGloss", "Material for glossy looking diffuse"),
             ('Metal_Livery_Matte', "MetalLiveryMatte", "Material for matte looking diffuse"),
             ('Metal_Secondary_Coloured_Livery', "MetalSecondaryColouredLivery", "Material for vehicle paint that has secondary colour setting"),
@@ -913,6 +968,8 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
             'Lights' : material_Lights,
             'Metal_Chrome' : material_MetalChrome,
             'Metal_Colorable' : material_MetalColorable,
+            'Metal_Half_Livery' : material_MetalHalfLivery,
+            'Metal_Livery_Carbon' : material_MetalLiveryCarbon,
             'Metal_Livery_Gloss' : material_MetalLiveryGloss,
             'Metal_Livery_Matte' : material_MetalLiveryMatte,
             'Metal_Secondary_Coloured_Livery' : material_MetalSecondaryColouredLivery,
