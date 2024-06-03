@@ -9,8 +9,6 @@ bl_info = {
     "support": "COMMUNITY"
 }
 
-#Only diffuse no default, other textures like emissives, normals are all default values and have to be changed manually.
-
 import bpy
 import math
 import os
@@ -70,7 +68,7 @@ def import_default_hp_textures():
 
         for dds_file in dds_files:
             filepath = os.path.join(directory, dds_file)
-            bpy.ops.image.open(filepath=filepath)
+            bpy.ops.image.open(filepath = filepath)
             image = bpy.data.images.get(dds_file)
             image.is_shared_asset = True
     else:
@@ -614,6 +612,107 @@ def material_PlasticBlack(mat):
 
     return status, "PlasticBlack"
 
+def material_Mirror(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_Reflective"
+        mat.name = "Mirror_" + mat.name
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [9.999999747378752e-06, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mReflectionControls", [1.0, 0.5, 3.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.05000000074505806, 0.10000000149011612, 4.0, 1.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
+
+    return status, "Mirror"
+
+def material_PlateRacer(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_Textured_NormalMapped_Reflective_Emissive_AO_Livery"
+        mat.name = "PlateRacer_" + mat.name
+        
+        status += createImageNode(mat, "NormalTextureSampler", '19_97_AA_7C.dds')
+        status += createImageNode(mat, "DiffuseTextureSampler", '10_C3_82_CD.dds')
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "ScratchTextureSampler", '85_68_7E_F0.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", 'E7_A5_A4_93.dds')
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 1.0, 0.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [0.0010000000474974513, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mReflectionControls", [0.009999999776482582, 0.009999999776482582, 3.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mScratchSpecularControls", [0.25, 0.25, 50.0, 0.10000000149011612])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [0.4, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.04, 0.7, 35.0, 0.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
+
+    return status, "PlateRacer"
+
+def material_PlateCop(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_Opaque_Textured_NormalMapped_Reflective_Emissive_AO_Livery"
+        mat.name = "PlateCop_" + mat.name
+        
+        status += createImageNode(mat, "NormalTextureSampler", 'F9_E1_60_01.dds')
+        status += createImageNode(mat, "DiffuseTextureSampler", '75_C5_BD_C5.dds')
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "ScratchTextureSampler", '85_68_7E_F0.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", 'E7_A5_A4_93.dds')
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 1.0, 0.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [0.0010000000474974513, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mReflectionControls", [0.009999999776482582, 0.009999999776482582, 3.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mScratchSpecularControls", [0.25, 0.25, 50.0, 0.10000000149011612])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [0.4, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.04, 0.7, 35.0, 0.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [1.0, 1.0, 1.0, 1.0])
+
+    return status, "PlateCop"
+
+def material_InteriorBadge(mat):
+
+    status = 0
+
+    if mat:
+        mat["shader_type"] = "Vehicle_1Bit_Textured_NormalMapped_Emissive_AO_Livery"
+        mat.name = "InteriorBadge_" + mat.name
+
+        status += createImageNode(mat, "NormalTextureSampler", 'E7_A5_A4_93.dds')
+        status += createImageNode(mat, "DiffuseTextureSampler")
+        status += createImageNode(mat, "AoMapTextureSampler", '13_94_2A_CA.dds')
+        status += createImageNode(mat, "ScratchTextureSampler", '85_68_7E_F0.dds')
+        status += createImageNode(mat, "LightmapLightsTextureSampler", '89_20_8C_6D.dds')
+
+        status += createMaterialCustomProperty(mat, "LightMultipliers", [1.0, 1.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsBlueChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsGreenChannelColour", [1.0, 1.0, 1.0, 1.0])
+        status += createMaterialCustomProperty(mat, "LightmappedLightsRedChannelColour", [1.0, 0.0, 0.0, 1.0])
+        status += createMaterialCustomProperty(mat, "MaterialShadowMapBias", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mEmissiveAdditiveAmount", [0.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mScratchSpecularControls", [0.009999999776482582, 0.15000000596046448, 5.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSelfIlluminationMultiplier", [1.0, 0.0, 0.0, 0.0])
+        status += createMaterialCustomProperty(mat, "mSpecularControls", [0.05, 0.5, 25.0, 0.0])
+        status += createMaterialCustomProperty(mat, "materialDiffuse", [0.016807, 0.016807, 0.016807, 1.0])
+
+    return status, "InteriorBadge"
+
+
+
 #Main Menu
 class EXPORTER_PLUGINS_MT_HPR(bpy.types.Menu):
     
@@ -705,7 +804,7 @@ class Initialize_Scene_OT_HPR(bpy.types.Operator):
 class Assign_Empty_OT_HPR(bpy.types.Operator):
     
     bl_idname = "assign.empty"
-    bl_label = "Assign parent to selected mesh"
+    bl_label = "Assign parent to selected mesh (Body only)"
     bl_description = "Auto assign each mesh a parent with the correct rotation."
     
     only_selected: BoolProperty(
@@ -768,6 +867,10 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
             ('Metal_Secondary_Coloured_Livery', "MetalSecondaryColouredLivery", "Material for vehicle paint that has secondary colour setting"),
             ('Opaque_DULL', "OpaqueDULL", "Material for dull looking diffuse"),
             ('Plastic_Black', "PlasticBlack", "Material for pure black"),
+            ('Mirror', "Mirror", "Material for mirrors"),
+            ('Plate_Racer', "PlateRacer", "Material for racer variant license plate"),
+            ('Plate_Cop', "PlateCop", "Material for cop variant license plate"),
+            ('Interior_Badge', "InteriorBadge", "Material for interior badging for more details"),
         ]
 
     #sort list
@@ -815,6 +918,10 @@ class Material_Vehicles_OT_HPR(bpy.types.Operator):
             'Metal_Secondary_Coloured_Livery' : material_MetalSecondaryColouredLivery,
             'Opaque_DULL' : material_OpaqueDULL,
             'Plastic_Black' : material_PlasticBlack,
+            'Mirror' : material_Mirror,
+            'Plate_Racer' : material_PlateRacer,
+            'Plate_Cop' : material_PlateCop,
+            'Interior_Badge' : material_InteriorBadge,
         }
 
         status = 0
