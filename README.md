@@ -48,4 +48,5 @@ Head to `Edit > Preferences > Addons > Install` and install the zip file under r
 ## Special Thanks
 
 ModularCV for providing the initial template for `Livery UV Template.png` and material settings.
+
 Xpr3xa for providing shader examples and material settings.
